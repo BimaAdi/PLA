@@ -1,0 +1,11 @@
+.full{
+    min-width: 100%;
+}
+
+.number{
+    max-width: 50px;
+}
+
+.wrap{
+    margin: 10px 20px 0px 20px;
+}

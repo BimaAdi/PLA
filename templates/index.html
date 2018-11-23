@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="refresh" content="60">
+    <title>Aplikasi Stream Twitter</title>
+    <link href="{{ url_for('static', filename='css/semantic.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="wrap">
+        <h1>Stream Twitter Aplication</h1>
+
+        <div class="ui grid">
+
+            <div class="four wide column">
+
+                <!-- Bagian Stream Twitter -->
+                {% if is_stream_run %}
+                <form class="ui card full" action="http://localhost:5000/stop_stream" method="GET">
+                    <div class="content">
+                        <div class="header">Stream Twitter</div>
+                    </div>
+                    <div class="content">
+                        <button type="submit" class="ui button danger">Stop Stream</button>
+                    </div>
+                </form>
+                {% else%}
+                <form class="ui card full" action="http://localhost:5000/start_stream" method="POST">
+                    <div class="content">
+                        <div class="header">Stream Twitter</div>
+                    </div>
+                    <div class="content">
+                        <div style="margin-bottom:50px">
+                            <div class="ui input" style="float:left;">
+                                <input type="number" name="menit" placeholder="stream setiap ... menit">
+                            </div>
+                            <select style="float: left; margin-top: 0px; margin-left: 5px;"name="mode" class="ui menu inline">
+                                <!-- <option value="Automatic">Automatic</option> -->
+                                <option class="item" value="Manual">Manual</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="ui button primary">Start Stream</button>
+                    </div>
+                </form>
+                {% endif %}
+
+                <!-- Bagian list Data -->
+                <div class="ui card full">
+                    <div class="content">
+                        <div class="header">Data Hasil Stream Twitter</div>
+                    </div>
+                    <div class="content">
+                        <div class="ui vertical pointing menu full">
+                            {% for item in data%}
+                                {% if item["predict_status"] %}
+                                    {% if item["current"] %}
+                                        <div class="active item"><a href="http://localhost:5000/hasil_prediksi/{{ item["filename"] }}">{{ item["filename"] }}</a> &#10004</div>
+                                    {% else%}
+                                        <div class="item"><a href="http://localhost:5000/hasil_prediksi/{{ item["filename"] }}">{{ item["filename"] }}</a> &#10004</div>
+                                    {% endif%}
+                                {% else %}
+                                    {% if item["current"] %}
+                                        <div class="active item"><a href="http://localhost:5000/hasil_prediksi/{{ item["filename"] }}">{{ item["filename"] }}</a></div>
+                                    {% else %}
+                                        <div class="item"><a href="http://localhost:5000/hasil_prediksi/{{ item["filename"] }}">{{ item["filename"] }}</a></div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor%}
+                        </div>
+        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian menampilkan data -->
+            <div class="twelve wide column">
+                <div class="ui card full">
+                    <div class="content">
+                        <div class="header">{{ showData["filename"] }}</div>
+                    </div>
+                    {% if showData["display"] %}
+                    <div class="content">
+                        <a href="http://localhost:5000/download/raw/{{ showData["filename"] }}" class="ui button">
+                            Save Raw
+                        </a>
+                        {% if showData["predict_status"] %}
+                        <a href="http://localhost:5000/download/predict/{{ showData["filename"] }}.csv" class="ui primary button">
+                            Save Predict
+                        </a>
+                        {% else %}
+                        <a href="http://localhost:5000/predict_txt/{{ showData["filename"] }}" class="ui green button">
+                            Predict
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="content">
+                        
+                        <!-- Tabel -->
+                        {% if showData["display"] %}
+                            {% if showData["predict_status"] %}
+                            <table class="ui celled padded table scroll">
+                                <thead>
+                                    <tr><th class="single line">Text</th>
+                                    <th>Conclusion</th>
+                                    <th>Percentage</th>
+                                </tr></thead>
+                                <tbody>
+                                    {% for item in showData["data"]%}
+                                    <tr>
+                                    <td>{{ item["text"] }}</td>
+                                    <td>
+                                        {{ item["conclusi"] }}
+                                    </td>
+                                    <td class="single line">
+                                        {{ item["percent"] }}
+                                    </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <table class="ui celled padded table scroll">
+                                <thead>
+                                    <tr><th class="single line">Text</th>
+                                </tr></thead>
+                                <tbody>
+                                    {% for item in showData["data"]%}
+                                    <tr>
+                                    <td>{{ item }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
+
+                        {% else %}
+                            <div>silahkan klik salah satu file di kolom "Data Hasil Stream Twitter" untuk menampilkan, memprediksi atau mendownload data</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+                
+    </div>
+    <!-- end wrap -->
+<!-- <script src="js/semantic.min.js"></script> -->
+</body>
+</html>
