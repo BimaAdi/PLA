@@ -5,9 +5,9 @@ dir_python = '/home/bimaadi/AplikasiStreamTwitter2/venv/bin/python'
 curr_username = 'bimaadi'
 raw_file_directory = 'file/raw'
 predict_file_directory = 'file/predict'
-# if not use proxy set it ''(blank)
-proxy = 'http://:@proxy.informatika.lipi.go.id:3128'
-# proxy = ''
+# jika tidak menggunkan proxy isi dengan ''(blank)
+# proxy = 'http://:@proxy.informatika.lipi.go.id:3128'
+proxy = ''
 os.environ['http_proxy'] = proxy
 os.environ['HTTP_PROXY'] = proxy
 os.environ['https_proxy'] = proxy

@@ -5,6 +5,7 @@ from crontab import CronTab
 from model.sentiment import *
 from stream import *
 from autoStream import *
+from utility import *
 from config import *
 
 # set Flask
@@ -20,81 +21,11 @@ cron = CronTab(user=curr_username)
 cron.remove_all()
 cron.write()
 
-def check_predict(raw, predict):
-    check = []
-    for i in range(len(raw)):
-        for j in range(len(predict)):
-            if (raw[i] == predict[j][:-4]):
-                check.append(raw[i])
-            
-    return(check)
-def remove_predict_raw(raw, predict):
-    for _ in range(len(predict)):
-        raw.remove(predict[_])
-    return(raw)
-
-def check_p(raw, predict, filename):
-    data = []
-    for item_raw in raw:
-        is_predict = False
-        for item_predict in predict:
-            if(item_raw == item_predict[:-4]):
-                is_predict = True
-        
-        item_data = {}
-        item_data["filename"] = item_raw
-        if(is_predict == False):
-            item_data["predict_status"] = False
-        else:
-            item_data["predict_status"] = True
-            
-        item_data["current"] = False
-        if(item_raw == filename):
-            item_data["current"] = True
-        data.append(item_data)
-    return(data)
-def get_status_data(filename, data):
-    for item in data:
-        if(item["filename"] == filename):
-            return(item["predict_status"])
-
-def get_data(filename, data, predict_status):
-    if(predict_status == True):
-        with open(predict_file_directory + "/" + filename + ".csv", mode='r') as fh:
-            rd = csv.DictReader(fh, delimiter=',') 
-            rd_list = []
-            for row in rd:
-                rd_list.append(row)
-        return(rd_list)
-    else:
-        input_file = open(raw_file_directory + "/" + filename)
-        rd_list = []
-        for line in input_file:
-            rd_list.append(line)
-        return(rd_list)
 #-------------------- ROUTE View ---------------------------------------------------
 """
 Route View berhubungan dengan untuk menampilkan templates
 """
 # index route
-"""
-@app.route("/")
-def index():
-    raw_file = os.listdir(raw_file_directory)
-    predict_file = os.listdir(predict_file_directory)
-    sudah_di_prediksi = check_predict(raw_file, predict_file)
-    raw_file = remove_predict_raw(raw_file, sudah_di_prediksi)
-    # print(sudah_di_prediksi)
-    # hari = ["Mon", "Tue", "Wed", "Thu", "Fri"]
-    raw_file.sort()
-    # print(raw_file)
-    if(len(cron) > 0):
-        is_stream_run = True
-    else:
-        is_stream_run = False
-    return render_template('index.html', raw_file=raw_file, sudah_di_prediksi=sudah_di_prediksi,is_stream_run=is_stream_run)
-"""
-""" ------------------------Start Experiment-------------------------"""
 """
 index untuk view yang baru
 - menampilkan current_file
@@ -115,7 +46,7 @@ def index():
     # set list data dan check apakah sudah di prediksi
     raw_file = os.listdir(raw_file_directory)
     predict_file = os.listdir(predict_file_directory)
-    data = check_p(raw_file, predict_file, current_file)
+    data = check_predict(raw_file, predict_file, current_file)
     # set data yang ditampilkan
     showData = {}
     showData["filename"] = current_file
@@ -128,7 +59,7 @@ def index():
 
     return render_template('index.html', is_stream_run=is_stream_run, data=data, showData=showData)
 
-# lihat hasil prediksi
+# lihat hasil prediksi (aktif ketika menekan tombol predict)
 @app.route("/hasil_prediksi/<filename>")
 def hasil_prediksi(filename):
     print(filename)
@@ -136,25 +67,6 @@ def hasil_prediksi(filename):
     current_file = str(filename)
     print(current_file)
     return redirect(url_for('index'))
-
-""" ------------------------End Experiment--------------------------"""
-# predict route
-@app.route("/predict")
-def predict():
-    predict_file = os.listdir(predict_file_directory)
-    # hari = ["Mon", "Tue", "Wed", "Thu", "Fri"]
-    predict_file.sort()
-    return render_template('predict.html', predict_file=predict_file)
-
-# lihat hasil prediksi
-# @app.route("/hasil_prediksi/<filename>")
-# def hasil_prediksi(filename):
-#     with open(predict_file_directory + "/" + filename + ".csv", mode='r') as fh:
-#         rd = csv.DictReader(fh, delimiter=',') 
-#         rd_list = []
-#         for row in rd:
-#             rd_list.append(row)
-#     return render_template('hasil.html', data=rd_list, filename=filename)
 
 #-------------------ROUTE Fungsi-----------------------------------------
 """
@@ -175,7 +87,8 @@ def start_stream():
     if(params == None):
         params = flask.request.args
     if(params != None):
-        if(params.get("menit") != ""):
+        print(type(params.get("menit")))
+        if((params.get("menit") != "") &(int(params.get("menit")) > 0)):
             print(params.get("mode"))
             """
             check apakah mode stream Manual atau Automatic
