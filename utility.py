@@ -1,7 +1,7 @@
-def remove_predict_raw(raw, predict):
-    for _ in range(len(predict)):
-        raw.remove(predict[_])
-    return(raw)
+# def remove_predict_raw(raw, predict):
+#     for _ in range(len(predict)):
+#         raw.remove(predict[_])
+#     return(raw)
 
 def check_predict(raw, predict, filename):
     data = []
@@ -23,12 +23,20 @@ def check_predict(raw, predict, filename):
             item_data["current"] = True
         data.append(item_data)
     return(data)
+
 def get_status_data(filename, data):
+    """
+    Mendapatkan status dari data, apakah data sudah 
+    diprediksi atau belum.
+    """
     for item in data:
         if(item["filename"] == filename):
             return(item["predict_status"])
 
 def get_data(filename, data, predict_status):
+    """
+    output data untuk ditampilkan 
+    """
     if(predict_status == True):
         with open(predict_file_directory + "/" + filename + ".csv", mode='r') as fh:
             rd = csv.DictReader(fh, delimiter=',') 
