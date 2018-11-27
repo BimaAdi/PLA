@@ -57,3 +57,6 @@ def begin_stream_manual(second, directory):
     start_time = time.time()
     twitterStream = Stream(auth, listener(start_time, time_limit=minute, directory=directory))
     twitterStream.filter(track=top10trends, async=True)
+
+
+begin_stream_manual(1, dir_aplikasi + "/" +raw_file_directory)
