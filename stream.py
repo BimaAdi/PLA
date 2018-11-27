@@ -41,13 +41,6 @@ class listener(StreamListener):
                 time.sleep(5)
                 pass
 
-        # with open(self.directory + "/" + self.begin +' - ' + time.asctime( time.localtime(time.time()) ), 'w') as f:
-        #     for item in self.tweet_data:
-        #         item = item.replace('\n','')
-        #         f.write("%s\n" % item)
-        # print("SELESAI")
-        # for item in self.tweet_data:
-        #     print(item, '\n')
         csv_head = ['text', 'hashtags'] #csv head
         csv_name = self.begin +' - ' + time.asctime( time.localtime(time.time()) )+ ".csv"
         try:
@@ -81,5 +74,3 @@ def begin_stream_manual(second, directory):
     twitterStream = Stream(auth, listener(start_time, time_limit=minute, directory=directory))
     twitterStream.filter(track=top10trends, async=True)
 
-
-begin_stream_manual(1, dir_aplikasi + "/" +raw_file_directory)

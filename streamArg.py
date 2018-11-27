@@ -41,11 +41,6 @@ class listener(StreamListener):
         csv_head = ['text', 'hashtags'] #csv head
         csv_name = self.begin +' - ' + time.asctime( time.localtime(time.time()) )+ ".csv"
 
-        # with open(sys.argv[2] + "/" + self.begin +' - ' + time.asctime( time.localtime(time.time()) ), 'w') as f:
-        #     for item in self.tweet_data:
-        #         item = item.replace('\n','')
-        #         f.write("%s\n" % item)
-
         try:
             with open(sys.argv[2] + "/" + csv_name, 'w') as csv_name:
                 writer = csv.DictWriter(csv_name, fieldnames=csv_head)

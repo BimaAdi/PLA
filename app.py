@@ -59,7 +59,7 @@ def index():
 
     return render_template('index.html', is_stream_run=is_stream_run, data=data, showData=showData)
 
-# lihat hasil prediksi (aktif ketika menekan tombol predict)
+# lihat hasil prediksi
 @app.route("/hasil_prediksi/<filename>")
 def hasil_prediksi(filename):
     print(filename)
@@ -173,21 +173,24 @@ def predict_txt(filename):
     Melakukan prediksi data stream twitter (<filename>) menggunakan model
     lalu data hasil prediksi di simpan dalam bentuk csv
     """
-    input_file = open(raw_file_directory + "/" + filename)
-    csv_head = ['text', 'conclusi', 'percent'] #csv head
+    csv_head = ['text', 'hashtags', 'conclusi', 'percent'] #csv head
     csv_body = []
-    for line in input_file:
-        with graph.as_default():
-            percent, conclusion = predict_sentiment(line, vocab, tokenizer, max_length, model)
-        csv_line = {}
-        csv_line["text"] = line
-        csv_line["conclusi"] = conclusion
-        csv_line["percent"] = str(percent * 100)
-        csv_body.append(csv_line)
-    
-    input_file.close()
-    # os.remove(raw_file_directory + "/" + filename)
 
+    # predict raw file csv
+    with open(raw_file_directory + "/" + filename + ".csv", mode='r') as fh:
+        rd = csv.DictReader(fh, delimiter=',') 
+        rd_list = []
+        for line in rd:
+            with graph.as_default():
+                percent, conclusion = predict_sentiment(line["text"], vocab, tokenizer, max_length, model)
+            csv_line = {}
+            csv_line["text"] = line["text"]
+            csv_line["hashtags"] = line["hashtags"]
+            csv_line["conclusi"] = conclusion
+            csv_line["percent"] = str(percent * 100)
+            csv_body.append(csv_line)
+
+    # simpan file csv
     csv_name = filename + ".csv"
     try:
         with open(predict_file_directory + "/" + csv_name, 'w') as csv_name:
