@@ -39,7 +39,7 @@ class listener(StreamListener):
                 time.sleep(5)
                 pass
         csv_head = ['text', 'hashtags'] #csv head
-        csv_name = self.begin +' - ' + time.asctime( time.localtime(time.time()) )+ ".csv"
+        csv_name = self.begin +' - ' + time.asctime( time.localtime(time.time()) )+ "-raw.csv"
 
         try:
             with open(sys.argv[2] + "/" + csv_name, 'w') as csv_name:

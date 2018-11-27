@@ -177,7 +177,7 @@ def predict_txt(filename):
     csv_body = []
 
     # predict raw file csv
-    with open(raw_file_directory + "/" + filename + ".csv", mode='r') as fh:
+    with open(raw_file_directory + "/" + filename + "-raw.csv", mode='r') as fh:
         rd = csv.DictReader(fh, delimiter=',') 
         rd_list = []
         for line in rd:
@@ -191,7 +191,7 @@ def predict_txt(filename):
             csv_body.append(csv_line)
 
     # simpan file csv
-    csv_name = filename + ".csv"
+    csv_name = filename + "-predict.csv"
     try:
         with open(predict_file_directory + "/" + csv_name, 'w') as csv_name:
             writer = csv.DictWriter(csv_name, fieldnames=csv_head)

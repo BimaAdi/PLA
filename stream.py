@@ -42,7 +42,7 @@ class listener(StreamListener):
                 pass
 
         csv_head = ['text', 'hashtags'] #csv head
-        csv_name = self.begin +' - ' + time.asctime( time.localtime(time.time()) )+ ".csv"
+        csv_name = self.begin +' - ' + time.asctime( time.localtime(time.time()) )+ "-raw.csv"
         try:
             with open(raw_file_directory + "/" + csv_name, 'w') as csv_name:
                 writer = csv.DictWriter(csv_name, fieldnames=csv_head)

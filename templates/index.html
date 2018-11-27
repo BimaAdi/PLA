@@ -83,11 +83,11 @@
                     </div>
                     {% if showData["display"] %}
                     <div class="content">
-                        <a href="http://localhost:5000/download/raw/{{ showData["filename"] }}.csv" class="ui button">
+                        <a href="http://localhost:5000/download/raw/{{ showData["filename"] }}-raw.csv" class="ui button">
                             Save Raw
                         </a>
                         {% if showData["predict_status"] %}
-                        <a href="http://localhost:5000/download/predict/{{ showData["filename"] }}.csv" class="ui primary button">
+                        <a href="http://localhost:5000/download/predict/{{ showData["filename"] }}-predict.csv" class="ui primary button">
                             Save Predict
                         </a>
                         {% else %}
