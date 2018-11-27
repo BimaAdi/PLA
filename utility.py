@@ -1,7 +1,10 @@
-# def remove_predict_raw(raw, predict):
-#     for _ in range(len(predict)):
-#         raw.remove(predict[_])
-#     return(raw)
+from config import *
+import csv
+
+def remove_predict_raw(raw, predict):
+    for _ in range(len(predict)):
+        raw.remove(predict[_])
+    return(raw)
 
 def check_predict(raw, predict, filename):
     data = []
