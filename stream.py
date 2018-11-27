@@ -24,7 +24,8 @@ class listener(StreamListener):
 
             try:
                 data_dict = json.loads(data)
-                print(data_dict["text"])
+                # print("\n", data_dict, "\n")
+                print(data_dict["entities"]["hashtags"], "\n")
                 self.tweet_data.append(data_dict["text"])
                 return True
             except BaseException as e:
