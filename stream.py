@@ -4,6 +4,7 @@ import time
 import json
 import sys
 import tweepy
+import csv
 from tweepy.auth import OAuthHandler
 from tweepy import Stream
 from tweepy.streaming import StreamListener
@@ -23,19 +24,34 @@ class listener(StreamListener):
         while (time.time() - self.time) < self.limit:
 
             try:
+                data_append = {}
                 data_dict = json.loads(data)
-                print(data_dict["text"])
-                self.tweet_data.append(data_dict["text"])
+                print("-----------------\n")
+                # print("\n", data_dict, "\n")
+                print(data_dict["entities"]["hashtags"], "\n")
+                data_append["hashtags"] = ""
+                for item in data_dict["entities"]["hashtags"]:
+                    # print(item["text"])
+                    data_append["hashtags"] += str(item["text"]) + ", "
+                data_append["text"] = data_dict["text"]
+                self.tweet_data.append(data_append)
                 return True
             except BaseException as e:
                 print('failed ondata', str(e))
                 time.sleep(5)
                 pass
 
-        with open(self.directory + "/" + self.begin +' - ' + time.asctime( time.localtime(time.time()) ), 'w') as f:
-            for item in self.tweet_data:
-                item = item.replace('\n','')
-                f.write("%s\n" % item)
+        csv_head = ['text', 'hashtags'] #csv head
+        csv_name = self.begin +' - ' + time.asctime( time.localtime(time.time()) )+ "-raw.csv"
+        try:
+            with open(raw_file_directory + "/" + csv_name, 'w') as csv_name:
+                writer = csv.DictWriter(csv_name, fieldnames=csv_head)
+                writer.writeheader()
+                for data in self.tweet_data:
+                    writer.writerow(data)
+        except IOError:
+                print("I/O error")
+
         exit()
 
     def on_error(self, status):
@@ -57,3 +73,4 @@ def begin_stream_manual(second, directory):
     start_time = time.time()
     twitterStream = Stream(auth, listener(start_time, time_limit=minute, directory=directory))
     twitterStream.filter(track=top10trends, async=True)
+
